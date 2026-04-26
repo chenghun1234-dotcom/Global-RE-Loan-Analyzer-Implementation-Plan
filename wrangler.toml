@@ -1,0 +1,18 @@
+name = "global-re-loan-analyzer"
+main = "src/index.ts"
+compatibility_date = "2024-04-26"
+
+[vars]
+FRED_API_KEY = "d4dd52b9244fc9d7a60f470424b97b9e"
+# ECOS_API_KEY = "YOUR_ECOS_KEY_HERE"
+# KOREA_DATA_SERVICE_KEY = ""
+
+# KV Namespace for Caching (ECOS Rates etc)
+# Run: npx wrangler kv:namespace create RATE_CACHE
+# Then update the id below
+# [[kv_namespaces]]
+# binding = "RATE_CACHE"
+# id = "..."
+
+[observability]
+enabled = true
