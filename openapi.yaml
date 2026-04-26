@@ -1,0 +1,134 @@
+openapi: 3.0.0
+info:
+  title: Global-RE-Loan-Analyzer (PropFinance-Insight)
+  description: |
+    A high-performance, zero-cost API for global real estate loan and collateral analysis. 
+    It provides deterministic financial logic for US and South Korean markets, 
+    including LTV/DSR checks, mortgage amortization, and bond yield calculations.
+  version: 1.0.0
+  contact:
+    name: API Support
+    url: https://global-re-loan-analyzer.wpbb1004.workers.dev
+servers:
+  - url: https://global-re-loan-analyzer.wpbb1004.workers.dev
+    description: Production Server (Cloudflare Workers)
+
+paths:
+  /valuation/property-value:
+    get:
+      summary: Estimate property value based on address
+      description: Returns market and official prices based on property address (currently deterministic mock).
+      parameters:
+        - name: address
+          in: query
+          required: true
+          schema:
+            type: string
+          example: "Seoul Gangnam-gu"
+        - name: lang
+          in: query
+          schema:
+            type: string
+            enum: [en, ko]
+            default: en
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              example:
+                status: "success"
+                data:
+                  address: "Seoul Gangnam-gu"
+                  market_price: 1500000000
+                  official_price: 1050000000
+
+  /valuation/ltv-check:
+    get:
+      summary: Check LTV limits for KR Market
+      description: Returns the maximum loan limit based on Korean regional regulations (Speculation Zone vs. Non-regulated).
+      parameters:
+        - name: address
+          in: query
+          required: true
+          schema:
+            type: string
+          example: "강남구"
+        - name: price
+          in: query
+          required: true
+          schema:
+            type: number
+          example: 1000000000
+        - name: lang
+          in: query
+          schema:
+            type: string
+            enum: [en, ko]
+            default: ko
+      responses:
+        '200':
+          description: Returns LTV limit details
+
+  /loan/amortization:
+    get:
+      summary: Mortgage Amortization Calculation
+      description: Returns monthly repayment schedule with live FRED (US) or ECOS (KR) rates.
+      parameters:
+        - name: principal
+          in: query
+          required: true
+          schema:
+            type: number
+          example: 500000000
+        - name: years
+          in: query
+          schema:
+            type: number
+            default: 30
+        - name: country
+          in: query
+          schema:
+            type: string
+            enum: [US, KR]
+            default: US
+        - name: rate
+          in: query
+          description: Optional manual interest rate override.
+          schema:
+            type: number
+        - name: lang
+          in: query
+          schema:
+            type: string
+            enum: [en, ko]
+            default: en
+      responses:
+        '200':
+          description: Successful amortization schedule
+
+  /bond/yield-calculator:
+    get:
+      summary: Calculate bond investment yield (IRR)
+      description: Provides Internal Rate of Return (IRR) for NPL/Bond recovery scenarios.
+      parameters:
+        - name: buy_price
+          in: query
+          required: true
+          schema:
+            type: number
+          example: 800000000
+        - name: recovery_amount
+          in: query
+          required: true
+          schema:
+            type: number
+          example: 1000000000
+        - name: months
+          in: query
+          schema:
+            type: number
+            default: 24
+      responses:
+        '200':
+          description: Yield analysis results
